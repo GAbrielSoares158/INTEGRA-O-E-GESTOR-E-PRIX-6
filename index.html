@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração de Webhooks - e-Gestor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+        
+        .content {
+            padding: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .left-panel, .right-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .config-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin: 15px 0;
+        }
+        
+        .instructions {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        button.secondary {
+            background: #7f8c8d;
+        }
+        
+        button.secondary:hover {
+            background: #636e70;
+        }
+        
+        button.success {
+            background: #27ae60;
+        }
+        
+        button.success:hover {
+            background: #219653;
+        }
+        
+        button.test {
+            background: #9b59b6;
+        }
+        
+        button.test:hover {
+            background: #8e44ad;
+        }
+        
+        .checkbox-group {
+            margin: 15px 0;
+        }
+        
+        .checkbox-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .checkbox-item label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+        
+        .json-option {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .json-option input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .token-info {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-family: monospace;
+            word-break: break-all;
+            font-size: 12px;
+        }
+        
+        .log-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .log-entry {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #3e5061;
+        }
+        
+        .log-time {
+            color: #3498db;
+            margin-right: 10px;
+        }
+        
+        .log-message {
+            color: #ecf0f1;
+        }
+        
+        .success {
+            color: #2ecc71;
+        }
+        
+        .error {
+            color: #e74c3c;
+        }
+        
+        .warning {
+            color: #f39c12;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .endpoint-url {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: monospace;
+            word-break: break-all;
+            font-size: 14px;
+        }
+        
+        .webhook-data {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 15px;
+                flex-direction: column;
+            }
+            
+            .config-section {
+                padding: 15px;
+            }
+            
+            .checkbox-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Configuração de Webhooks</h1>
+            <p class="subtitle">e-Gestor - Receba notificações em tempo real</p>
+        </header>
+        
+        <div class="content">
+            <div class="left-panel">
+                <div class="instructions">
+                    <h3>Como configurar webhooks:</h3>
+                    <ol>
+                        <li>Informe o endpoint do seu sistema que receberá as notificações</li>
+                        <li>Configure um token de segurança para validar as requisições</li>
+                        <li>Selecione os eventos que você deseja receber</li>
+                        <li>Salve a configuração e teste o envio</li>
+                    </ol>
+                </div>
+                
+                <div class="config-section">
+                    <h2>Configuração do Webhook</h2>
+                    
+                    <div class="form-group">
+                        <label for="endpoint-type">Tipo de Endpoint:</label>
+                        <select id="endpoint-type" onchange="toggleEndpointOptions()">
+                            <option value="simulated">Endpoint Simulado (para testes)</option>
+                            <option value="external">Endpoint Externo</option>
+                        </select>
+                    </div>
+                    
+                    <div id="external-endpoint" style="display: none;">
+                        <div class="form-group">
+                            <label for="endpoint-input">Endereço (endpoint):</label>
+                            <input type="text" id="endpoint-input" placeholder="https://sistema.com.br/egestor/webhooks">
+                        </div>
+                    </div>
+                    
+                    <div id="simulated-endpoint">
+                        <div class="form-group">
+                            <label>Seu Endpoint Simulado:</label>
+                            <div class="endpoint-url" id="simulated-url">https://seudominio.com/webhook/egestor</div>
+                            <button onclick="copiarEndpoint()" class="secondary">Copiar URL</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="token-input">Security token:</label>
+                        <input type="text" id="token-input" readonly>
+                        <button onclick="gerarNovoToken()" class="secondary" style="margin-top: 10px;">Gerar Novo Token</button>
+                    </div>
+                    
+                    <div class="json-option">
+                        <input type="checkbox" id="json-option" checked>
+                        <label for="json-option">Enviar como JSON</label>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h2>Webhooks Ativos</h2>
+                    <p>Selecione os eventos que você deseja receber:</p>
+                    
+                    <div class="checkbox-row">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="produtos">
+                            <label for="produtos">Produtos</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="vendas" checked>
+                            <label for="vendas">Vendas</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="usuarios">
+                            <label for="usuarios">Usuários</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="nfce" checked>
+                            <label for="nfce">NFC-e</label>
+                        </div>
+                    </div>
+                    
+                    <div class="checkbox-row">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="contatos">
+                            <label for="contatos">Contatos</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="financeiro" checked>
+                            <label for="financeiro">Financeiro</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="nfe">
+                            <label for="nfe">NF-e</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button onclick="testarEnvio()" class="test">Salvar e Testar Envio</button>
+                    <button onclick="salvarConfiguracao()" class="success">Salvar</button>
+                </div>
+                
+                <div class="config-section">
+                    <h2>Logs de Teste</h2>
+                    <p>Resultado dos testes de envio de webhooks:</p>
+                    
+                    <div class="log-container" id="log-container">
+                        <div class="log-entry">
+                            <span class="log-time">[00:00:00]</span>
+                            <span class="log-message">Sistema de webhooks inicializado. Configure e teste os webhooks.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="config-section">
+                    <h2>Endpoint Simulado</h2>
+                    <p>Este endpoint simulado receberá as notificações do e-Gestor para testes:</p>
+                    
+                    <div class="webhook-data" id="webhook-data">
+                        <div>Nenhum dado recebido ainda.</div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button onclick="limparDados()" class="secondary">Limpar Dados</button>
+                        <button onclick="simularEvento()" class="test">Simular Evento Manualmente</button>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h2>Como Criar um Endpoint Real</h2>
+                    <div class="instructions">
+                        <p>Para criar um endpoint real em seu servidor:</p>
+                        <ol>
+                            <li>Crie um script PHP, Node.js ou similar em seu servidor</li>
+                            <li>O script deve aceitar requisições POST</li>
+                            <li>Verifique o token de segurança para autenticar as requisições</li>
+                            <li>Processe os dados recebidos conforme necessário</li>
+                            <li>Retorne status HTTP 200 para confirmar o recebimento</li>
+                        </ol>
+                        <p>Exemplo de endpoint PHP simples:</p>
+                        <pre>
+&lt;?php
+// webhook.php
+$token = 'SEU_TOKEN_AQUI';
+$received_token = $_SERVER['HTTP_X_EGESTOR_TOKEN'] ?? '';
+
+if ($received_token !== $token) {
+    http_response_code(403);
+    die('Token inválido');
+}
+
+$data = file_get_contents('php://input');
+$json = json_decode($data, true);
+
+// Processar os dados recebidos
+file_put_contents('webhook_log.txt', print_r($json, true), FILE_APPEND);
+
+http_response_code(200);
+echo 'Webhook recebido com sucesso';
+?&gt;
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Webhooks permitem que o e-Gestor notifique seu sistema em tempo real sobre eventos importantes.</p>
+    </footer>
+
+    <script>
+        // Variáveis globais
+        let webhookConfig = {
+            endpoint: "",
+            securityToken: "Webhook" + Math.random().toString(36).substring(2, 15),
+            sendAsJson: true,
+            activeWebhooks: {
+                produtos: false,
+                vendas: true,
+                usuarios: false,
+                nfce: true,
+                contatos: false,
+                financeiro: true,
+                nfe: false
+            }
+        };
+        
+        let logs = [];
+        let receivedWebhooks = [];
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            adicionarLog("Sistema de webhooks inicializado. Configure e teste os webhooks.");
+            document.getElementById('token-input').value = webhookConfig.securityToken;
+            
+            // Gerar URL única para este usuário
+            const userId = Math.random().toString(36).substring(2, 10);
+            document.getElementById('simulated-url').textContent = 
+                `https://webhook.egestor.com/simulado/${userId}`;
+            webhookConfig.endpoint = `https://webhook.egestor.com/simulado/${userId}`;
+            
+            // Carregar configuração salva se existir
+            const savedConfig = localStorage.getItem('egestor_webhook_config');
+            if (savedConfig) {
+                try {
+                    webhookConfig = JSON.parse(savedConfig);
+                    aplicarConfiguracao();
+                    adicionarLog("Configuração de webhooks carregada do storage.");
+                } catch (e) {
+                    adicionarLog("Erro ao carregar configuração salva: " + e.message, "error");
+                }
+            }
+            
+            // Iniciar verificação de webhooks recebidos
+            setInterval(verificarWebhooksRecebidos, 2000);
+        });
+        
+        // Alternar entre endpoint simulado e externo
+        function toggleEndpointOptions() {
+            const endpointType = document.getElementById('endpoint-type').value;
+            const externalEndpoint = document.getElementById('external-endpoint');
+            const simulatedEndpoint = document.getElementById('simulated-endpoint');
+            
+            if (endpointType === 'external') {
+                externalEndpoint.style.display = 'block';
+                simulatedEndpoint.style.display = 'none';
+                webhookConfig.endpoint = document.getElementById('endpoint-input').value;
+            } else {
+                externalEndpoint.style.display = 'none';
+                simulatedEndpoint.style.display = 'block';
+                webhookConfig.endpoint = document.getElementById('simulated-url').textContent;
+            }
+        }
+        
+        // Copiar endpoint para a área de transferência
+        function copiarEndpoint() {
+            const endpoint = document.getElementById('simulated-url').textContent;
+            navigator.clipboard.writeText(endpoint).then(() => {
+                adicionarLog("URL do endpoint copiada para a área de transferência.");
+            }).catch(err => {
+                adicionarLog("Falha ao copiar URL: " + err, "error");
+            });
+        }
+        
+        // Aplicar configuração na interface
+        function aplicarConfiguracao() {
+            document.getElementById('token-input').value = webhookConfig.securityToken;
+            document.getElementById('json-option').checked = webhookConfig.sendAsJson;
+            
+            // Aplicar checkboxes
+            for (const key in webhookConfig.activeWebhooks) {
+                const checkbox = document.getElementById(key);
+                if (checkbox) {
+                    checkbox.checked = webhookConfig.activeWebhooks[key];
+                }
+            }
+        }
+        
+        // Gerar novo token de segurança
+        function gerarNovoToken() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let prefix = 'Webhook';
+            let token = '';
+            
+            for (let i = 0; i < 20; i++) {
+                token += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            webhookConfig.securityToken = prefix + token;
+            document.getElementById('token-input').value = webhookConfig.securityToken;
+            
+            adicionarLog("Novo token de segurança gerado: " + webhookConfig.securityToken);
+        }
+        
+        // Salvar configuração
+        function salvarConfiguracao() {
+            // Coletar valores da interface
+            const endpointType = document.getElementById('endpoint-type').value;
+            
+            if (endpointType === 'external') {
+                webhookConfig.endpoint = document.getElementById('endpoint-input').value;
+                if (!webhookConfig.endpoint) {
+                    adicionarLog("Erro: Endpoint externo não informado.", "error");
+                    return;
+                }
+            }
+            
+            webhookConfig.sendAsJson = document.getElementById('json-option').checked;
+            
+            // Coletar webhooks ativos
+            for (const key in webhookConfig.activeWebhooks) {
+                const checkbox = document.getElementById(key);
+                if (checkbox) {
+                    webhookConfig.activeWebhooks[key] = checkbox.checked;
+                }
+            }
+            
+            // Salvar no localStorage
+            localStorage.setItem('egestor_webhook_config', JSON.stringify(webhookConfig));
+            
+            adicionarLog("Configuração de webhooks salva com sucesso!", "success");
+            
+            // Simular salvamento no servidor
+            simularSalvamentoNoServidor();
+        }
+        
+        // Testar envio de webhook
+        function testarEnvio() {
+            // Primeiro salvar a configuração
+            salvarConfiguracao();
+            
+            adicionarLog("Iniciando teste de envio de webhook...");
+            
+            // Simular envio de webhooks para os eventos ativos
+            for (const key in webhookConfig.activeWebhooks) {
+                if (webhookConfig.activeWebhooks[key]) {
+                    simularEnvioWebhook(key);
+                }
+            }
+        }
+        
+        // Simular salvamento no servidor
+        function simularSalvamentoNoServidor() {
+            setTimeout(() => {
+                adicionarLog("Configuração salva no servidor do e-Gestor.", "success");
+            }, 1000);
+        }
+        
+        // Simular envio de webhook para um evento específico
+        function simularEnvioWebhook(evento) {
+            const eventNames = {
+                produtos: "Produtos",
+                vendas: "Vendas",
+                usuarios: "Usuários",
+                nfce: "NFC-e",
+                contatos: "Contatos",
+                financeiro: "Financeiro",
+                nfe: "NF-e"
+            };
+            
+            adicionarLog(`Simulando envio de webhook para: ${eventNames[evento]}`);
+            
+            // Dados de exemplo para cada tipo de evento
+            const sampleData = {
+                produtos: {
+                    event: "product.update",
+                    data: {
+                        id: 12345,
+                        name: "Produto de Exemplo",
+                        price: 99.99,
+                        stock: 42
+                    }
+                },
+                vendas: {
+                    event: "sale.create",
+                    data: {
+                        id: 67890,
+                        customer: "Cliente Exemplo",
+                        total: 150.75,
+                        items: [
+                            { product: "Produto A", quantity: 2, price: 25.50 },
+                            { product: "Produto B", quantity: 1, price: 99.75 }
+                        ]
+                    }
+                },
+                nfce: {
+                    event: "nfce.create",
+                    data: {
+                        id: 54321,
+                        number: "12345",
+                        series: "1",
+                        value: 89.90,
+                        status: "approved"
+                    }
+                },
+                financeiro: {
+                    event: "financial.update",
+                    data: {
+                        transaction_id: 98765,
+                        type: "income",
+                        value: 250.00,
+                        description: "Pagamento recebido"
+                    }
+                }
+            };
+            
+            // Dados padrão se não houver específico
+            const data = sampleData[evento] || {
+                event: evento,
+                data: { message: "Evento de teste do webhook" }
+            };
+            
+            // Adicionar timestamp
+            data.timestamp = new Date().toISOString();
+            
+            // Simular atraso de rede
+            setTimeout(() => {
+                // Adicionar à lista de webhooks recebidos
+                receivedWebhooks.push({
+                    event: evento,
+                    data: data,
+                    timestamp: new Date()
+                });
+                
+                adicionarLog(`Webhook para ${eventNames[evento]} enviado com sucesso!`, "success");
+                
+                // Atualizar exibição
+                atualizarDadosWebhook();
+            }, 1500);
+        }
+        
+        // Verificar se há webhooks recebidos (simulação)
+        function verificarWebhooksRecebidos() {
+            // Em um cenário real, isso faria uma requisição para verificar se há novos webhooks
+            // Aqui é apenas uma simulação
+            if (Math.random() < 0.1) { // 10% de chance de receber um webhook automático
+                const events = ["vendas", "financeiro", "nfce"];
+                const randomEvent = events[Math.floor(Math.random() * events.length)];
+                
+                const eventData = {
+                    vendas: {
+                        event: "sale.create",
+                        data: {
+                            id: Math.floor(Math.random() * 10000),
+                            customer: "Cliente Automático",
+                            total: Math.random() * 200 + 50,
+                            timestamp: new Date().toISOString()
+                        }
+                    },
+                    financeiro: {
+                        event: "financial.update",
+                        data: {
+                            transaction_id: Math.floor(Math.random() * 10000),
+                            type: Math.random() > 0.5 ? "income" : "expense",
+                            value: Math.random() * 300 + 20,
+                            description: "Transação automática",
+                            timestamp: new Date().toISOString()
+                        }
+                    },
+                    nfce: {
+                        event: "nfce.create",
+                        data: {
+                            id: Math.floor(Math.random() * 10000),
+                            number: Math.floor(Math.random() * 1000),
+                            series: "1",
+                            value: Math.random() * 150 + 30,
+                            status: "approved",
+                            timestamp: new Date().toISOString()
+                        }
+                    }
+                };
+                
+                receivedWebhooks.push({
+                    event: randomEvent,
+                    data: eventData[randomEvent],
+                    timestamp: new Date()
+                });
+                
+                adicionarLog(`Webhook automático recebido: ${randomEvent}`, "success");
+                atualizarDadosWebhook();
+            }
+        }
+        
+        // Atualizar a exibição dos dados do webhook
+        function atualizarDadosWebhook() {
+            const webhookData = document.getElementById('webhook-data');
+            
+            if (receivedWebhooks.length === 0) {
+                webhookData.innerHTML = "<div>Nenhum dado recebido ainda.</div>";
+                return;
+            }
+            
+            let html = "";
+            for (let i = 0; i < receivedWebhooks.length; i++) {
+                const webhook = receivedWebhooks[i];
+                html += `<div><strong>${new Date(webhook.timestamp).toLocaleTimeString()} - ${webhook.event}</strong><br>`;
+                html += `<pre>${JSON.stringify(webhook.data, null, 2)}</pre></div>`;
+                
+                if (i < receivedWebhooks.length - 1) {
+                    html += "<hr>";
+                }
+            }
+            
+            webhookData.innerHTML = html;
+            webhookData.scrollTop = webhookData.scrollHeight;
+        }
+        
+        // Limpar dados recebidos
+        function limparDados() {
+            receivedWebhooks = [];
+            atualizarDadosWebhook();
+            adicionarLog("Dados do webhook limpos.");
+        }
+        
+        // Simular evento manualmente
+        function simularEvento() {
+            const events = [];
+            for (const key in webhookConfig.activeWebhooks) {
+                if (webhookConfig.activeWebhooks[key]) {
+                    events.push(key);
+                }
+            }
+            
+            if (events.length === 0) {
+                adicionarLog("Nenhum evento selecionado para simulação.", "warning");
+                return;
+            }
+            
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            simularEnvioWebhook(randomEvent);
+        }
+        
+        // Função para adicionar logs
+        function adicionarLog(mensagem, tipo = "info") {
+            const now = new Date();
+            const timeString = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
+            
+            const logContainer = document.getElementById('log-container');
+            const entryElement = document.createElement('div');
+            entryElement.className = 'log-entry';
+            
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'log-time';
+            timeSpan.textContent = timeString;
+            
+            const messageSpan = document.createElement('span');
+            messageSpan.className = 'log-message ' + tipo;
+            messageSpan.textContent = mensagem;
+            
+            entryElement.appendChild(timeSpan);
+            entryElement.appendChild(messageSpan);
+            
+            logContainer.appendChild(entryElement);
+            
+            // Rolagem automática para o final
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Manter apenas os últimos 50 logs
+            const logs = logContainer.querySelectorAll('.log-entry');
+            if (logs.length > 50) {
+                logContainer.removeChild(logs[0]);
+            }
+        }
+    </script>
+</body>
+</html>

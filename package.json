@@ -1,0 +1,43 @@
+{
+  "name": "egestor-prix6-bridge",
+  "version": "1.0.0",
+  "description": "Integração Balança Prix 6 com e-Gestor",
+  "author": "Gabriel Soares",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "dist": "electron-builder --win --publish=never",
+    "build-dir": "electron-builder --win --config.win.target=dir",
+    "clean": "rm -rf dist node_modules",
+    "rebuild": "npm run clean && npm install"
+  },
+  "build": {
+    "appId": "com.egestor.prix6.bridge",
+    "productName": "Integrador e-Gestor - Prix 6",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "dir",
+      "sign": false
+    }
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "electron-store": "^8.1.0",
+    "serialport": "^10.5.0"
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^23.6.0"
+  },
+  "keywords": [],
+  "license": "ISC"
+}
